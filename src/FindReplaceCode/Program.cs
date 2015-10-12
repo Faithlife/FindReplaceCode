@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -13,12 +14,14 @@ namespace FindReplaceCode
 	{
 		public Program(string[] args)
 		{
-			if (args.Length == 0)
+			if (args.Length < 3)
 				throw new ProgramException(s_fullUsageMessage);
 			if (args.Length % 2 != 1)
-				throw new ProgramException("The last <search> is missing its <replace>.");
+				throw new ProgramException("Missing <folder-path>, or the last <search> is missing its <replace>.");
 
-			m_folderPath = Path.Combine(Environment.CurrentDirectory, args[0]);
+			m_folderPath = args[0];
+			if (!Path.IsPathRooted(m_folderPath))
+				throw new ProgramException("<folder-path> must be an absolute path.");
 
 			var searchReplaceArgs = new List<KeyValuePair<string, string>>();
 			for (int index = 1; index < args.Length; index += 2)
@@ -34,47 +37,83 @@ namespace FindReplaceCode
 			if (m_searchReplaceArgs.Any(x => string.IsNullOrWhiteSpace(x.Key) || string.IsNullOrWhiteSpace(x.Value)))
 				throw new ProgramException("Neither <search> nor <replace> can be blank.");
 
-			var infos = new DirectoryInfo(m_folderPath).EnumerateFileSystemInfos("*", SearchOption.AllDirectories)
+			DirectoryInfo folderInfo = new DirectoryInfo(m_folderPath);
+			var infos = folderInfo.EnumerateFileSystemInfos("*", SearchOption.AllDirectories)
 				.Where(x => !ShouldIgnoreFileSystemInfo(x)).ToList();
-
-			var oldGuids = new HashSet<Guid>();
-
-			// find GUIDs that need replacing
-			foreach (var slnFile in infos.OfType<FileInfo>().Where(x => x.Extension == ".sln"))
-			{
-				string slnFileText = File.ReadAllText(slnFile.FullName);
-				var projectRegex = new Regex(@"^\s*Project\(.*""(" + c_guidPattern + @")""\r?$", RegexOptions.CultureInvariant | RegexOptions.Multiline);
-				foreach (var oldGuid in projectRegex.Matches(slnFileText).Cast<Match>().Select(x => Guid.Parse(x.Groups[1].ToString())))
-					oldGuids.Add(oldGuid);
-			}
-			foreach (var csprojFile in infos.OfType<FileInfo>().Where(x => x.Extension == ".csproj"))
-			{
-				string csprojFileText = File.ReadAllText(csprojFile.FullName);
-				var projectRegex = new Regex(@"^\s*<ProjectGuid>(" + c_guidPattern + @")", RegexOptions.CultureInvariant | RegexOptions.Multiline);
-				foreach (var oldGuid in projectRegex.Matches(csprojFileText).Cast<Match>().Select(x => Guid.Parse(x.Groups[1].ToString())))
-					oldGuids.Add(oldGuid);
-			}
 
 			// enhance search/replace pairs
 			m_searchReplacePairs = new List<KeyValuePair<string, string>>();
 			foreach (var searchReplacePair in m_searchReplaceArgs)
 				m_searchReplacePairs.AddRange(GetEnhancedFindReplacePairs(searchReplacePair));
 
+			var oldGuids = new HashSet<Guid>();
+
+			// create new GUIDs for csproj files that will be renamed
+			foreach (var csprojFile in infos.OfType<FileInfo>().Where(x => x.Extension == ".csproj"))
+			{
+				string oldName = csprojFile.Name;
+				if (oldName != ReplaceStrings(oldName))
+				{
+					string csprojFileText = File.ReadAllText(csprojFile.FullName);
+					var projectRegex = new Regex(@"^\s*<ProjectGuid>(" + c_guidPattern + @")", RegexOptions.CultureInvariant | RegexOptions.Multiline);
+					foreach (var oldGuid in projectRegex.Matches(csprojFileText).Cast<Match>().Select(x => Guid.Parse(x.Groups[1].ToString())))
+						oldGuids.Add(oldGuid);
+				}
+			}
+
 			// calculate new GUIDs
 			m_searchReplaceGuids = oldGuids.Select(x => new KeyValuePair<Regex, Guid>(CreateRegexForGuid(x), Guid.NewGuid())).ToList();
 
 			FindReplace(infos, doIt: false);
-
-			Console.WriteLine();
-			Console.WriteLine("WARNING! This operation will EDIT {0} files and RENAME {1} files and directories.", m_editCount, m_renameCount);
-			Console.Write("ARE YOU SURE you want to do this? (y/n) ");
-
-			string confirmation = Console.ReadLine();
-			if (confirmation == null || confirmation.ToLowerInvariant() != "y")
-				return;
 			Console.WriteLine();
 
-			FindReplace(infos, doIt: true);
+			if (m_editCount != 0 && m_renameCount != 0)
+			{
+				string backupFolderPath;
+				int backupFolderSuffix = 0;
+				while (true)
+				{
+					backupFolderPath = Path.Combine(Path.GetTempPath(), Path.GetFileName(m_folderPath) + (backupFolderSuffix == 0 ? "" : backupFolderSuffix.ToString()));
+					if (!Directory.Exists(backupFolderPath) && !File.Exists(backupFolderPath))
+						break;
+					backupFolderSuffix++;
+				}
+
+				Console.WriteLine("WARNING! This operation will EDIT {0} files and RENAME {1} files and folders.", m_editCount, m_renameCount);
+				Console.WriteLine("The folder will first be backed up to: {0}", backupFolderPath);
+				Console.Write("ARE YOU SURE you want to do this? Type yes if you dare: ");
+
+				string confirmation = Console.ReadLine();
+				Console.WriteLine();
+
+				if (confirmation == "yes")
+				{
+					Console.WriteLine("Backing up files to: {0}", backupFolderPath);
+					Console.WriteLine();
+
+					var backupFolderInfo = new DirectoryInfo(backupFolderPath);
+					backupFolderInfo.Create();
+					CopyFilesRecursively(folderInfo, backupFolderInfo);
+
+					FindReplace(infos, doIt: true);
+				}
+				else
+				{
+					Console.WriteLine("Aborted. No files or directories were edited or renamed.");
+				}
+			}
+			else
+			{
+				Console.WriteLine("Nothing to do.");
+			}
+		}
+
+		public static void CopyFilesRecursively(DirectoryInfo sourceDirectory, DirectoryInfo targetDirectory)
+		{
+			foreach (DirectoryInfo directory in sourceDirectory.GetDirectories())
+				CopyFilesRecursively(directory, targetDirectory.CreateSubdirectory(directory.Name));
+			foreach (FileInfo file in sourceDirectory.GetFiles())
+				file.CopyTo(Path.Combine(targetDirectory.FullName, file.Name));
 		}
 
 		private IEnumerable<KeyValuePair<string, string>> GetEnhancedFindReplacePairs(KeyValuePair<string, string> searchReplacePair)
@@ -147,7 +186,7 @@ namespace FindReplaceCode
 
 					string oldContent = File.ReadAllText(info.FullName);
 
-					string newContent = ReplaceGuids(ReplaceStrings(oldContent, m_searchReplacePairs), m_searchReplaceGuids);
+					string newContent = ReplaceGuids(ReplaceStrings(oldContent));
 
 					if (oldContent != newContent)
 					{
@@ -160,28 +199,36 @@ namespace FindReplaceCode
 				}
 
 				string oldName = info.Name;
-				string newName = ReplaceStrings(oldName, m_searchReplacePairs);
+				string newName = ReplaceStrings(oldName);
 				if (oldName != newName)
 				{
 					Console.WriteLine("Rename {0} to {1}.", info.FullName, newName);
 					m_renameCount++;
 
+					string newPath = Path.Combine(Path.GetDirectoryName(info.FullName), newName);
+					if (File.Exists(newPath) || Directory.Exists(newPath))
+						throw new ProgramException(string.Format(CultureInfo.InvariantCulture, "{0} already exists!", newPath));
+
 					if (doIt)
-						info.MoveTo(Path.Combine(Path.GetDirectoryName(info.FullName), newName));
+						info.MoveTo(newPath);
 				}
 			}
 
 			foreach (DirectoryInfo info in infos.OfType<DirectoryInfo>())
 			{
 				string oldName = info.Name;
-				string newName = ReplaceStrings(oldName, m_searchReplacePairs);
+				string newName = ReplaceStrings(oldName);
 				if (oldName != newName)
 				{
 					Console.WriteLine("Rename {0} to {1}.", info.FullName, newName);
 					m_renameCount++;
 
+					string newPath = Path.Combine(Path.GetDirectoryName(info.FullName), newName);
+					if (File.Exists(newPath) || Directory.Exists(newPath))
+						throw new ProgramException(string.Format(CultureInfo.InvariantCulture, "{0} already exists!", newPath));
+
 					if (doIt)
-						info.MoveTo(Path.Combine(Path.GetDirectoryName(info.FullName), newName));
+						info.MoveTo(newPath);
 				}
 			}
 		}
@@ -201,7 +248,7 @@ namespace FindReplaceCode
 			return s_findReplaceFileContentExtensions.Contains(extension);
 		}
 
-		private static string ReplaceStrings(string oldText, IEnumerable<KeyValuePair<string, string>> m_searchReplacePairs)
+		private string ReplaceStrings(string oldText)
 		{
 			string newText = oldText;
 			foreach (var searchReplacePair in m_searchReplacePairs)
@@ -209,7 +256,7 @@ namespace FindReplaceCode
 			return newText;
 		}
 
-		private static string ReplaceGuids(string oldText, IEnumerable<KeyValuePair<Regex, Guid>> m_searchReplaceGuids)
+		private string ReplaceGuids(string oldText)
 		{
 			string newText = oldText;
 			foreach (var projectGuid in m_searchReplaceGuids)
@@ -233,7 +280,7 @@ namespace FindReplaceCode
 
 		static readonly string s_fullUsageMessage = string.Join(Environment.NewLine, new[]
 		{
-			"Usage: FindReplaceCode.exe <folder-path> [<find> <replace> ...]"
+			"Usage: FindReplaceCode.exe <folder-path> <find> <replace> [<find> <replace> ...]"
 		});
 
 		static readonly HashSet<string> s_findReplaceFileContentExtensions =
