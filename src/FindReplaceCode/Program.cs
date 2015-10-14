@@ -19,7 +19,7 @@ namespace FindReplaceCode
 			if (args.Length % 2 != 1)
 				throw new ProgramException("Missing <folder-path>, or the last <search> is missing its <replace>.");
 
-			m_folderPath = Path.Combine(Environment.CurrentDirectory, args[0]);
+			m_folderPath = Path.GetFullPath(args[0]);
 
 			var searchReplaceArgs = new List<KeyValuePair<string, string>>();
 			for (int index = 1; index < args.Length; index += 2)
@@ -71,7 +71,7 @@ namespace FindReplaceCode
 				int backupFolderSuffix = 0;
 				while (true)
 				{
-					backupFolderPath = Path.Combine(Path.GetTempPath(), Path.GetFileName(m_folderPath) + (backupFolderSuffix == 0 ? "" : backupFolderSuffix.ToString()));
+					backupFolderPath = Path.Combine(Path.GetTempPath(), Path.GetFileName(m_folderPath) + (backupFolderSuffix == 0 ? "" : ("-" + backupFolderSuffix)));
 					if (!Directory.Exists(backupFolderPath) && !File.Exists(backupFolderPath))
 						break;
 					backupFolderSuffix++;
@@ -93,7 +93,17 @@ namespace FindReplaceCode
 					backupFolderInfo.Create();
 					CopyFilesRecursively(folderInfo, backupFolderInfo);
 
-					FindReplace(infos, doIt: true);
+					bool success = false;
+					try
+					{
+						FindReplace(infos, doIt: true);
+						success = true;
+					}
+					finally
+					{
+						Console.WriteLine();
+						Console.WriteLine("{0}! Backup location: {1}", success ? "DONE" : "FAILED", backupFolderPath);
+					}
 				}
 				else
 				{
@@ -102,7 +112,7 @@ namespace FindReplaceCode
 			}
 			else
 			{
-				Console.WriteLine("Nothing to do.");
+				Console.WriteLine("Nothing to do. The search string(s) were not found.");
 			}
 		}
 
@@ -188,19 +198,22 @@ namespace FindReplaceCode
 
 					if (oldContent != newContent)
 					{
-						Console.WriteLine("Find and replace in {0}.", info.FullName);
+						Console.WriteLine("{0} [edit]", info.FullName);
 						m_editCount++;
 
 						if (doIt)
 							File.WriteAllText(info.FullName, newContent, new UTF8Encoding(hasBOM));
 					}
 				}
+			}
 
+			foreach (FileInfo info in infos.OfType<FileInfo>())
+			{
 				string oldName = info.Name;
 				string newName = ReplaceStrings(oldName);
 				if (oldName != newName)
 				{
-					Console.WriteLine("Rename {0} to {1}.", info.FullName, newName);
+					Console.WriteLine("{0} => {1}", info.FullName, Path.GetFileName(newName));
 					m_renameCount++;
 
 					string newPath = Path.Combine(Path.GetDirectoryName(info.FullName), newName);
@@ -218,7 +231,7 @@ namespace FindReplaceCode
 				string newName = ReplaceStrings(oldName);
 				if (oldName != newName)
 				{
-					Console.WriteLine("Rename {0} to {1}.", info.FullName, newName);
+					Console.WriteLine("{0} => {1}", info.FullName, Path.GetFileName(newName));
 					m_renameCount++;
 
 					string newPath = Path.Combine(Path.GetDirectoryName(info.FullName), newName);
