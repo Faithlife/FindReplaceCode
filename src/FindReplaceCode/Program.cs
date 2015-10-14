@@ -19,9 +19,7 @@ namespace FindReplaceCode
 			if (args.Length % 2 != 1)
 				throw new ProgramException("Missing <folder-path>, or the last <search> is missing its <replace>.");
 
-			m_folderPath = args[0];
-			if (!Path.IsPathRooted(m_folderPath))
-				throw new ProgramException("<folder-path> must be an absolute path.");
+			m_folderPath = Path.Combine(Environment.CurrentDirectory, args[0]);
 
 			var searchReplaceArgs = new List<KeyValuePair<string, string>>();
 			for (int index = 1; index < args.Length; index += 2)

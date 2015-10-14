@@ -24,8 +24,6 @@ The first argument is the folder path. This tool may edit and/or rename every fi
 
 Normally you would point the tool at a folder where you have made a copy of a project or solution that you want to modify.
 
-The folder path must be an absolute path to help avoid accidents.
-
 ### Find and Replace
 
 Each pair of arguments after the folder path indicate *text to find* and *text to replace* it with.
