@@ -25,7 +25,7 @@ namespace FindReplaceCode.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("asax,cake,config,cs,csproj,fsd,json,md,nuspec,proto,ps1,settings,sln")]
+        [global::System.Configuration.DefaultSettingValueAttribute("asax,cake,config,cs,csproj,fsd,json,md,nuspec,proto,ps1,settings,sln,xaml")]
         public string FindReplaceFileContentExtensions {
             get {
                 return ((string)(this["FindReplaceFileContentExtensions"]));
