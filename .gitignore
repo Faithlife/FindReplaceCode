@@ -15,6 +15,7 @@ packages/*
 !packages/NuGet.CommandLine*/
 
 # ignore user-specific options/cache files
+.vs/
 _ReSharper.*
 StyleCop.Cache
 Thumbs.db
