@@ -65,7 +65,7 @@ namespace FindReplaceCode
 			FindReplace(infos, doIt: false);
 			Console.WriteLine();
 
-			if (m_editCount != 0 && m_renameCount != 0)
+			if (m_editCount != 0 || m_renameCount != 0)
 			{
 				string backupFolderPath;
 				int backupFolderSuffix = 0;
