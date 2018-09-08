@@ -4,18 +4,18 @@ Used to generate a new code project from a template.
 
 **WARNING:** This tool is recursively destructive. Please be extremely careful with it.
 
-This tool is deployed to `\\dev\util\FindReplaceCode\FindReplaceCode.exe`.
+This tool is installed as a dotnet tool: `dotnet tool install Faithlife.FindReplaceCode.Tool --global`.
 
 ## Usage
 
 ```
-Usage: FindReplaceCode.exe <folder-path> <find> <replace> [<find> <replace> ...]
+Usage: findreplacecode <folder-path> <find> <replace> [<find> <replace> ...]
 ```
 
 For example:
 
 ```
-> \\dev\util\FindReplaceCode\FindReplaceCode.exe C:\Code\MyItemApi MyItem CoolThing
+> findreplacecode C:\Code\MyItemApi MyItem CoolThing
 ```
 
 ### Folder Path
