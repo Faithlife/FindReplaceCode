@@ -1,47 +1,21 @@
-# ignore various output files
-*.resources
-
 # ignore output folders
 bin/
-release/
+build/
+cake/
 obj/
 ipch/
-GeneratedCode/
-Setup/
-logs/
-
-# ignore NuGet packages
-packages/*
-!packages/NuGet.CommandLine*/
+release/
+tools/
 
 # ignore user-specific options/cache files
 .vs/
-_ReSharper.*
-StyleCop.Cache
 Thumbs.db
-*.csproj.user
-*.DotSettings.user
+*.cache
+*.user
 *.opensdf
-*.[Rr]e[Ss]harper.user
 *.sdf
-*.sln.cache
 *.suo
-*.vcxproj.user
-*.pubxml.user
-*.mode1v3
-!default.mode1v3
-*.pbxuser
-!default.pbxuser
-*.perspectivev3
-*.pidb
 *.userprefs
-*.tmp
 *.ncrunchproject
 *.ncrunchsolution
-*.ncrunchsolution.user
-*.crunchsolution.cache
-*.crunchsolution.user
-_NCrunch_*
-
-# Ignore log files
-*.log
+nCrunchTemp*

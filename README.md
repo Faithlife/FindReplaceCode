@@ -43,3 +43,16 @@ Any subfolder whose name starts with a period (e.g. `.git`) is automatically exc
 ## Issues
 
 Only [certain file extensions](src/FindReplaceCode/App.config) are currently considered for content replacement. Please let us know if there are others that should be added.
+
+## Build Status
+
+Ubuntu | Windows | NuGet
+--- | --- | ---
+[![Travis CI](https://img.shields.io/travis/Faithlife/FindReplaceCode/master.svg)](https://travis-ci.org/Faithlife/FindReplaceCode) | [![AppVeyor](https://img.shields.io/appveyor/ci/Faithlife/findreplacecode/master.svg)](https://ci.appveyor.com/project/Faithlife/findreplacecode) | [![NuGet](https://img.shields.io/nuget/v/FindReplaceCode.svg)](https://www.nuget.org/packages/FindReplaceCode)
+
+## Documentation
+
+* https://faithlife.github.io/FindReplaceCode/
+* License: [MIT](LICENSE)
+* [Version History](VersionHistory.md)
+* [Contributing Guidelines](CONTRIBUTING.md)
