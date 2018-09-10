@@ -1,12 +1,12 @@
-# ProjectName
+# FindReplaceCode
 
-**ProjectName** description
+**FindReplaceCode** description
 
 ## Installation
 
-ProjectName should be installed [via NuGet](https://www.nuget.org/packages/ProjectName).
+FindReplaceCode should be installed [via NuGet](https://www.nuget.org/packages/FindReplaceCode).
 
 ## Documentation
 
-* [Reference Documentation](ProjectName.md)
+* [Reference Documentation](FindReplaceCode.md)
 
