@@ -42,7 +42,7 @@ Any subfolder whose name starts with a period (e.g. `.git`) is automatically exc
 
 ## Issues
 
-Only [certain file extensions](src/FindReplaceCode/App.config) are currently considered for content replacement. Please let us know if there are others that should be added.
+Only [certain file extensions](src/FindReplaceCode/ProgramSettings.cs) are currently considered for content replacement. Please let us know if there are others that should be added.
 
 ## Build Status
 
@@ -52,7 +52,6 @@ Ubuntu | Windows | NuGet
 
 ## Documentation
 
-* https://faithlife.github.io/FindReplaceCode/
 * License: [MIT](LICENSE)
 * [Version History](VersionHistory.md)
 * [Contributing Guidelines](CONTRIBUTING.md)

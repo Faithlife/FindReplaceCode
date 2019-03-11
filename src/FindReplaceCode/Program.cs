@@ -255,7 +255,7 @@ namespace FindReplaceCode
 				return false;
 
 			string extension = Path.GetExtension(info.Name).ToLowerInvariant();
-			return s_findReplaceFileContentExtensions.Contains(extension);
+			return ProgramSettings.FindReplaceFileContentExtensions.Contains(extension);
 		}
 
 		private string ReplaceStrings(string oldText)
@@ -292,27 +292,6 @@ namespace FindReplaceCode
 		{
 			"Usage: FindReplaceCode.exe <folder-path> <find> <replace> [<find> <replace> ...]"
 		});
-
-		private static readonly HashSet<string> s_findReplaceFileContentExtensions = new HashSet<string>
-		{
-			".asax",
-			".cake",
-			".config",
-			".cs",
-			".csproj",
-			".fsd",
-			".html",
-			".json",
-			".md",
-			".nuspec",
-			".props",
-			".proto",
-			".ps1",
-			".settings",
-			".sln",
-			".xaml",
-			".yml",
-		};
 
 		private static readonly Regex s_hiddenDirectoryRegex = new Regex(@"[\\/]\..*[\\/]", RegexOptions.CultureInvariant);
 
