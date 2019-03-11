@@ -48,7 +48,7 @@ Only [certain file extensions](src/FindReplaceCode/ProgramSettings.cs) are curre
 
 Ubuntu | Windows | NuGet
 --- | --- | ---
-[![Travis CI](https://img.shields.io/travis/Faithlife/FindReplaceCode/master.svg)](https://travis-ci.org/Faithlife/FindReplaceCode) | [![AppVeyor](https://img.shields.io/appveyor/ci/Faithlife/findreplacecode/master.svg)](https://ci.appveyor.com/project/Faithlife/findreplacecode) | [![NuGet](https://img.shields.io/nuget/v/FindReplaceCode.svg)](https://www.nuget.org/packages/FindReplaceCode)
+[![Travis CI](https://img.shields.io/travis/Faithlife/FindReplaceCode/master.svg)](https://travis-ci.org/Faithlife/FindReplaceCode) | [![AppVeyor](https://img.shields.io/appveyor/ci/Faithlife/findreplacecode/master.svg)](https://ci.appveyor.com/project/Faithlife/findreplacecode) | [![NuGet](https://img.shields.io/nuget/v/Faithlife.FindReplaceCode.Tool.svg)](https://www.nuget.org/packages/Faithlife.FindReplaceCode.Tool)
 
 ## Documentation
 
