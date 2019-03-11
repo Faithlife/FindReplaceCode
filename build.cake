@@ -1,5 +1,5 @@
-#addin "Cake.Git"
-#addin nuget:?package=Cake.XmlDocMarkdown&version=1.4.1
+#addin Cake.Git
+#addin Cake.XmlDocMarkdown&version=1.4.1
 
 using System.Text.RegularExpressions;
 
@@ -10,9 +10,6 @@ var trigger = Argument("trigger", "");
 var versionSuffix = Argument("versionSuffix", "");
 
 var solutionFileName = "FindReplaceCode.sln";
-var docsProjects = new[] { "FindReplaceCode" };
-var docsRepoUri = "https://github.com/Faithlife/FindReplaceCode.git";
-var docsSourceUri = "https://github.com/Faithlife/FindReplaceCode/tree/master/src";
 
 var nugetSource = "https://api.nuget.org/v3/index.json";
 var buildBotUserName = "faithlifebuildbot";
@@ -23,8 +20,6 @@ Task("Clean")
 	{
 		CleanDirectories("src/**/bin");
 		CleanDirectories("src/**/obj");
-		CleanDirectories("tests/**/bin");
-		CleanDirectories("tests/**/obj");
 		CleanDirectories("release");
 	});
 
@@ -45,49 +40,8 @@ Task("Rebuild")
 	.IsDependentOn("Clean")
 	.IsDependentOn("Build");
 
-Task("UpdateDocs")
-	.WithCriteria(!string.IsNullOrEmpty(buildBotPassword))
-	.WithCriteria(EnvironmentVariable("APPVEYOR_REPO_BRANCH") == "master")
-	.IsDependentOn("Build")
-	.Does(() =>
-	{
-		var branchName = "gh-pages";
-		var docsDirectory = new DirectoryPath(branchName);
-		GitClone(docsRepoUri, docsDirectory, new GitCloneSettings { BranchName = branchName });
-
-		Information($"Updating documentation at {docsDirectory}.");
-		foreach (var docsProject in docsProjects)
-		{
-			XmlDocMarkdownGenerate(File($"src/{docsProject}/bin/{configuration}/net461/{docsProject}.dll").ToString(), $"{docsDirectory}{System.IO.Path.DirectorySeparatorChar}",
-				new XmlDocMarkdownSettings { SourceCodePath = $"{docsSourceUri}/{docsProject}", NewLine = "\n", ShouldClean = true });
-		}
-
-		if (GitHasUncommitedChanges(docsDirectory))
-		{
-			Information("Committing all documentation changes.");
-			GitAddAll(docsDirectory);
-			GitCommit(docsDirectory, "Faithlife Build Bot", "faithlifebuildbot@users.noreply.github.com", "Automatic documentation update.");
-			Information("Pushing updated documentation to GitHub.");
-			GitPush(docsDirectory, buildBotUserName, buildBotPassword, branchName);
-		}
-		else
-		{
-			Information("No documentation changes detected.");
-		}
-	});
-
-Task("Test")
-	.IsDependentOn("Build")
-	.Does(() =>
-	{
-		foreach (var projectPath in GetFiles("tests/**/*.csproj").Select(x => x.FullPath))
-			DotNetCoreTest(projectPath, new DotNetCoreTestSettings { Configuration = configuration, NoBuild = true, NoRestore = true });
-	});
-
 Task("NuGetPackage")
 	.IsDependentOn("Rebuild")
-	.IsDependentOn("Test")
-	.IsDependentOn("UpdateDocs")
 	.Does(() =>
 	{
 		if (string.IsNullOrEmpty(versionSuffix) && !string.IsNullOrEmpty(trigger))
@@ -96,17 +50,8 @@ Task("NuGetPackage")
 			DotNetCorePack(projectPath, new DotNetCorePackSettings { Configuration = configuration, NoBuild = true, NoRestore = true, OutputDirectory = "release", VersionSuffix = versionSuffix });
 	});
 
-Task("NuGetPackageTest")
-	.IsDependentOn("NuGetPackage")
-	.Does(() =>
-	{
-		var firstProject = GetFiles("src/**/*.csproj").First().FullPath;
-		foreach (var nupkg in GetFiles("release/**/*.nupkg").Select(x => x.FullPath))
-			DotNetCoreTool(firstProject, "sourcelink", $"test {nupkg}");
-	});
-
 Task("NuGetPublish")
-	.IsDependentOn("NuGetPackageTest")
+	.IsDependentOn("NuGetPackage")
 	.Does(() =>
 	{
 		var nupkgPaths = GetFiles("release/*.nupkg").Select(x => x.FullPath).ToList();
@@ -137,7 +82,7 @@ Task("NuGetPublish")
 	});
 
 Task("Default")
-	.IsDependentOn("Test");
+	.IsDependentOn("Build");
 
 void ExecuteProcess(string exePath, string arguments)
 {
