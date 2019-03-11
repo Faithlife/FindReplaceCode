@@ -1,9 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="FindReplaceCode.Properties" GeneratedClassName="Settings">
-  <Profiles />
-  <Settings>
-    <Setting Name="FindReplaceFileContentExtensions" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">asax,cake,config,cs,csproj,fsd,html,json,md,nuspec,props,proto,ps1,settings,sln,xaml,yml</Value>
-    </Setting>
-  </Settings>
-</SettingsFile>

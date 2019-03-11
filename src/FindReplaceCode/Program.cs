@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using FindReplaceCode.Properties;
 
 namespace FindReplaceCode
 {
@@ -294,8 +293,26 @@ namespace FindReplaceCode
 			"Usage: FindReplaceCode.exe <folder-path> <find> <replace> [<find> <replace> ...]"
 		});
 
-		static readonly HashSet<string> s_findReplaceFileContentExtensions =
-			new HashSet<string>(Settings.Default.FindReplaceFileContentExtensions.Split(',').Select(x => "." + x.Trim()));
+		private static readonly HashSet<string> s_findReplaceFileContentExtensions = new HashSet<string>
+		{
+			".asax",
+			".cake",
+			".config",
+			".cs",
+			".csproj",
+			".fsd",
+			".html",
+			".json",
+			".md",
+			".nuspec",
+			".props",
+			".proto",
+			".ps1",
+			".settings",
+			".sln",
+			".xaml",
+			".yml",
+		};
 
 		static readonly Regex s_hiddenDirectoryRegex = new Regex(@"[\\/]\..*[\\/]", RegexOptions.CultureInvariant);
 
