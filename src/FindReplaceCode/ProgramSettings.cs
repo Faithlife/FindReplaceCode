@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace FindReplaceCode
 {
-	public sealed class ProgramSettings
+	public static class ProgramSettings
 	{
 		public static readonly IReadOnlyCollection<string> FindReplaceFileContentExtensions = new HashSet<string>
 		{
