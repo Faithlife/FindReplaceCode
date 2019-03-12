@@ -9,6 +9,6 @@ Prefix the description of the change with `[major]`, `[minor]` or `[patch]` in a
 
 ## Released
 
-### 0.1.0
+### 1.0.0
 
 * Initial release.

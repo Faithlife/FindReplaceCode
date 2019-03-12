@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using FindReplaceCode.Properties;
 
 namespace FindReplaceCode
 {
@@ -256,7 +255,7 @@ namespace FindReplaceCode
 				return false;
 
 			string extension = Path.GetExtension(info.Name).ToLowerInvariant();
-			return s_findReplaceFileContentExtensions.Contains(extension);
+			return ProgramSettings.FindReplaceFileContentExtensions.Contains(extension);
 		}
 
 		private string ReplaceStrings(string oldText)
@@ -287,23 +286,20 @@ namespace FindReplaceCode
 			return oldText != oldText.ToUpperInvariant() ? newText : newText.ToUpperInvariant();
 		}
 
-		const string c_guidPattern = @"\{[0-9a-zA-Z]{8}-[0-9a-zA-Z]{4}-[0-9a-zA-Z]{4}-[0-9a-zA-Z]{4}-[0-9a-zA-Z]{12}\}";
+		private const string c_guidPattern = @"\{[0-9a-zA-Z]{8}-[0-9a-zA-Z]{4}-[0-9a-zA-Z]{4}-[0-9a-zA-Z]{4}-[0-9a-zA-Z]{12}\}";
 
-		static readonly string s_fullUsageMessage = string.Join(Environment.NewLine, new[]
+		private static readonly string s_fullUsageMessage = string.Join(Environment.NewLine, new[]
 		{
 			"Usage: FindReplaceCode.exe <folder-path> <find> <replace> [<find> <replace> ...]"
 		});
 
-		static readonly HashSet<string> s_findReplaceFileContentExtensions =
-			new HashSet<string>(Settings.Default.FindReplaceFileContentExtensions.Split(',').Select(x => "." + x.Trim()));
+		private static readonly Regex s_hiddenDirectoryRegex = new Regex(@"[\\/]\..*[\\/]", RegexOptions.CultureInvariant);
 
-		static readonly Regex s_hiddenDirectoryRegex = new Regex(@"[\\/]\..*[\\/]", RegexOptions.CultureInvariant);
-
-		readonly string m_folderPath;
-		readonly ReadOnlyCollection<KeyValuePair<string, string>> m_searchReplaceArgs;
-		List<KeyValuePair<string, string>> m_searchReplacePairs;
-		List<KeyValuePair<Regex, Guid>> m_searchReplaceGuids;
-		int m_editCount;
-		int m_renameCount;
+		private readonly string m_folderPath;
+		private readonly ReadOnlyCollection<KeyValuePair<string, string>> m_searchReplaceArgs;
+		private List<KeyValuePair<string, string>> m_searchReplacePairs;
+		private List<KeyValuePair<Regex, Guid>> m_searchReplaceGuids;
+		private int m_editCount;
+		private int m_renameCount;
 	}
 }
