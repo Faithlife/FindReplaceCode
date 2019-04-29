@@ -144,6 +144,14 @@ namespace FindReplaceCode
 			enhancedKeyValuePair = TryGetEnhancedFindReplacePairs(searchReplacePair, x => x.ToUpperInvariant());
 			if (enhancedKeyValuePair != null)
 				yield return enhancedKeyValuePair.Value;
+
+			enhancedKeyValuePair = TryGetEnhancedFindReplacePairs(searchReplacePair, x => ToSnakeCase(x, '_'));
+			if (enhancedKeyValuePair != null)
+				yield return enhancedKeyValuePair.Value;
+
+			enhancedKeyValuePair = TryGetEnhancedFindReplacePairs(searchReplacePair, x => ToSnakeCase(x, '-'));
+			if (enhancedKeyValuePair != null)
+				yield return enhancedKeyValuePair.Value;
 		}
 
 		private static KeyValuePair<string, string>? TryGetEnhancedFindReplacePairs(KeyValuePair<string, string> searchReplacePair, Func<string, string> transform)
@@ -286,6 +294,17 @@ namespace FindReplaceCode
 			return oldText != oldText.ToUpperInvariant() ? newText : newText.ToUpperInvariant();
 		}
 
+		private static string ToSnakeCase(string value, char separator)
+		{
+			if (value == null)
+				return null;
+
+			var words = GetWords(value);
+			return string.Join(separator.ToString(), words.Select(x => x.ToLowerInvariant()));
+		}
+
+		private static string[] GetWords(string value) => s_word.Matches(value).Select(x => x.ToString()).ToArray();
+
 		private const string c_guidPattern = @"\{[0-9a-zA-Z]{8}-[0-9a-zA-Z]{4}-[0-9a-zA-Z]{4}-[0-9a-zA-Z]{4}-[0-9a-zA-Z]{12}\}";
 
 		private static readonly string s_fullUsageMessage = string.Join(Environment.NewLine, new[]
@@ -294,6 +313,7 @@ namespace FindReplaceCode
 		});
 
 		private static readonly Regex s_hiddenDirectoryRegex = new Regex(@"[\\/]\..*[\\/]", RegexOptions.CultureInvariant);
+		private static readonly Regex s_word = new Regex("[A-Z]([A-Z]*(?![a-z])|[a-z]*)|[a-z]+|[0-9]+", RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);
 
 		private readonly string m_folderPath;
 		private readonly ReadOnlyCollection<KeyValuePair<string, string>> m_searchReplaceArgs;
