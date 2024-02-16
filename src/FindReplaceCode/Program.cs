@@ -1,9 +1,5 @@
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
-using System.IO;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -14,14 +10,14 @@ namespace FindReplaceCode
 		public Program(string[] args)
 		{
 			if (args.Length < 3)
-				throw new ProgramException(s_fullUsageMessage);
+				throw new ProgramException(c_fullUsageMessage);
 			if (args.Length % 2 != 1)
 				throw new ProgramException("Missing <folder-path>, or the last <search> is missing its <replace>.");
 
 			m_folderPath = Path.GetFullPath(args[0]);
 
 			var searchReplaceArgs = new List<KeyValuePair<string, string>>();
-			for (int index = 1; index < args.Length; index += 2)
+			for (var index = 1; index < args.Length; index += 2)
 				searchReplaceArgs.Add(new KeyValuePair<string, string>(args[index], args[index + 1]));
 			m_searchReplaceArgs = searchReplaceArgs.AsReadOnly();
 		}
@@ -34,7 +30,7 @@ namespace FindReplaceCode
 			if (m_searchReplaceArgs.Any(x => string.IsNullOrWhiteSpace(x.Key) || string.IsNullOrWhiteSpace(x.Value)))
 				throw new ProgramException("Neither <search> nor <replace> can be blank.");
 
-			DirectoryInfo folderInfo = new DirectoryInfo(m_folderPath);
+			var folderInfo = new DirectoryInfo(m_folderPath);
 			var infos = folderInfo.EnumerateFileSystemInfos("*", SearchOption.AllDirectories)
 				.Where(x => !ShouldIgnoreFileSystemInfo(x)).ToList();
 
@@ -48,11 +44,11 @@ namespace FindReplaceCode
 			// create new GUIDs for csproj files that will be renamed
 			foreach (var csprojFile in infos.OfType<FileInfo>().Where(x => x.Extension == ".csproj"))
 			{
-				string oldName = csprojFile.Name;
+				var oldName = csprojFile.Name;
 				if (oldName != ReplaceStrings(oldName))
 				{
-					string csprojFileText = File.ReadAllText(csprojFile.FullName);
-					var projectRegex = new Regex(@"^\s*<ProjectGuid>(" + c_guidPattern + @")", RegexOptions.CultureInvariant | RegexOptions.Multiline);
+					var csprojFileText = File.ReadAllText(csprojFile.FullName);
+					var projectRegex = new Regex(@"^\s*<ProjectGuid>(" + c_guidPattern + ")", RegexOptions.CultureInvariant | RegexOptions.Multiline);
 					foreach (var oldGuid in projectRegex.Matches(csprojFileText).Cast<Match>().Select(x => Guid.Parse(x.Groups[1].ToString())))
 						oldGuids.Add(oldGuid);
 				}
@@ -67,7 +63,7 @@ namespace FindReplaceCode
 			if (m_editCount != 0 || m_renameCount != 0)
 			{
 				string backupFolderPath;
-				int backupFolderSuffix = 0;
+				var backupFolderSuffix = 0;
 				while (true)
 				{
 					backupFolderPath = Path.Combine(Path.GetTempPath(), Path.GetFileName(m_folderPath) + (backupFolderSuffix == 0 ? "" : ("-" + backupFolderSuffix)));
@@ -80,7 +76,7 @@ namespace FindReplaceCode
 				Console.WriteLine("The folder will first be backed up to: {0}", backupFolderPath);
 				Console.Write("ARE YOU SURE you want to do this? Type yes if you dare: ");
 
-				string confirmation = Console.ReadLine();
+				var confirmation = Console.ReadLine();
 				Console.WriteLine();
 
 				if (confirmation == "yes")
@@ -92,7 +88,7 @@ namespace FindReplaceCode
 					backupFolderInfo.Create();
 					CopyFilesRecursively(folderInfo, backupFolderInfo);
 
-					bool success = false;
+					var success = false;
 					try
 					{
 						FindReplace(infos, doIt: true);
@@ -117,9 +113,9 @@ namespace FindReplaceCode
 
 		public static void CopyFilesRecursively(DirectoryInfo sourceDirectory, DirectoryInfo targetDirectory)
 		{
-			foreach (DirectoryInfo directory in sourceDirectory.GetDirectories())
+			foreach (var directory in sourceDirectory.GetDirectories())
 				CopyFilesRecursively(directory, targetDirectory.CreateSubdirectory(directory.Name));
-			foreach (FileInfo file in sourceDirectory.GetFiles())
+			foreach (var file in sourceDirectory.GetFiles())
 				file.CopyTo(Path.Combine(targetDirectory.FullName, file.Name));
 		}
 
@@ -156,19 +152,13 @@ namespace FindReplaceCode
 
 		private static KeyValuePair<string, string>? TryGetEnhancedFindReplacePairs(KeyValuePair<string, string> searchReplacePair, Func<string, string> transform)
 		{
-			string newKey = transform(searchReplacePair.Key);
+			var newKey = transform(searchReplacePair.Key);
 			return newKey != searchReplacePair.Key ? new KeyValuePair<string, string>(newKey, transform(searchReplacePair.Value)) : default(KeyValuePair<string, string>?);
 		}
 
-		private static string Capitalize(string text)
-		{
-			return text.Substring(0, 1).ToUpperInvariant() + text.Substring(1);
-		}
+		private static string Capitalize(string text) => string.Concat(text.Substring(0, 1).ToUpperInvariant(), text.AsSpan(1));
 
-		private static string Uncapitalize(string text)
-		{
-			return text.Substring(0, 1).ToLowerInvariant() + text.Substring(1);
-		}
+		private static string Uncapitalize(string text) => string.Concat(text.Substring(0, 1).ToLowerInvariant(), text.AsSpan(1));
 
 		public static void Main(string[] args)
 		{
@@ -191,7 +181,7 @@ namespace FindReplaceCode
 			m_editCount = 0;
 			m_renameCount = 0;
 
-			foreach (FileInfo info in infos.OfType<FileInfo>())
+			foreach (var info in infos.OfType<FileInfo>())
 			{
 				if (ShouldFindReplaceFileContent(info))
 				{
@@ -199,9 +189,9 @@ namespace FindReplaceCode
 					using (var stream = File.OpenRead(info.FullName))
 						hasBOM = stream.ReadByte() == 0xEF && stream.ReadByte() == 0xBB && stream.ReadByte() == 0xBF;
 
-					string oldContent = File.ReadAllText(info.FullName);
+					var oldContent = File.ReadAllText(info.FullName);
 
-					string newContent = ReplaceGuids(ReplaceStrings(oldContent));
+					var newContent = ReplaceGuids(ReplaceStrings(oldContent));
 
 					if (oldContent != newContent)
 					{
@@ -214,16 +204,16 @@ namespace FindReplaceCode
 				}
 			}
 
-			foreach (FileInfo info in infos.OfType<FileInfo>())
+			foreach (var info in infos.OfType<FileInfo>())
 			{
-				string oldName = info.Name;
-				string newName = ReplaceStrings(oldName);
+				var oldName = info.Name;
+				var newName = ReplaceStrings(oldName);
 				if (oldName != newName)
 				{
 					Console.WriteLine("{0} => {1}", info.FullName, Path.GetFileName(newName));
 					m_renameCount++;
 
-					string newPath = Path.Combine(Path.GetDirectoryName(info.FullName), newName);
+					var newPath = Path.Combine(Path.GetDirectoryName(info.FullName)!, newName);
 					if (File.Exists(newPath) || Directory.Exists(newPath))
 						throw new ProgramException(string.Format(CultureInfo.InvariantCulture, "{0} already exists!", newPath));
 
@@ -232,16 +222,16 @@ namespace FindReplaceCode
 				}
 			}
 
-			foreach (DirectoryInfo info in infos.OfType<DirectoryInfo>())
+			foreach (var info in infos.OfType<DirectoryInfo>())
 			{
-				string oldName = info.Name;
-				string newName = ReplaceStrings(oldName);
+				var oldName = info.Name;
+				var newName = ReplaceStrings(oldName);
 				if (oldName != newName)
 				{
 					Console.WriteLine("{0} => {1}", info.FullName, Path.GetFileName(newName));
 					m_renameCount++;
 
-					string newPath = Path.Combine(Path.GetDirectoryName(info.FullName), newName);
+					var newPath = Path.Combine(Path.GetDirectoryName(info.FullName)!, newName);
 					if (File.Exists(newPath) || Directory.Exists(newPath))
 						throw new ProgramException(string.Format(CultureInfo.InvariantCulture, "{0} already exists!", newPath));
 
@@ -262,22 +252,22 @@ namespace FindReplaceCode
 			if (!(info is FileInfo))
 				return false;
 
-			string extension = Path.GetExtension(info.Name).ToLowerInvariant();
+			var extension = Path.GetExtension(info.Name).ToLowerInvariant();
 			return ProgramSettings.FindReplaceFileContentExtensions.Contains(extension);
 		}
 
 		private string ReplaceStrings(string oldText)
 		{
-			string newText = oldText;
-			foreach (var searchReplacePair in m_searchReplacePairs)
-				newText = newText.Replace(searchReplacePair.Key, searchReplacePair.Value);
+			var newText = oldText;
+			foreach (var searchReplacePair in m_searchReplacePairs!)
+				newText = newText.Replace(searchReplacePair.Key, searchReplacePair.Value, StringComparison.Ordinal);
 			return newText;
 		}
 
 		private string ReplaceGuids(string oldText)
 		{
-			string newText = oldText;
-			foreach (var projectGuid in m_searchReplaceGuids)
+			var newText = oldText;
+			foreach (var projectGuid in m_searchReplaceGuids!)
 				newText = projectGuid.Key.Replace(newText, x => RenderMatchingGuid(x, projectGuid.Value));
 			return newText;
 		}
@@ -289,16 +279,15 @@ namespace FindReplaceCode
 
 		private static string RenderMatchingGuid(Match match, Guid value)
 		{
-			string oldText = match.ToString();
-			string newText = value.ToString();
+			var oldText = match.ToString();
+			var newText = value.ToString();
+#pragma warning disable CA1862
 			return oldText != oldText.ToUpperInvariant() ? newText : newText.ToUpperInvariant();
+#pragma warning restore CA1862
 		}
 
 		private static string ToSnakeCase(string value, char separator)
 		{
-			if (value == null)
-				return null;
-
 			var words = GetWords(value);
 			return string.Join(separator.ToString(), words.Select(x => x.ToLowerInvariant()));
 		}
@@ -307,18 +296,15 @@ namespace FindReplaceCode
 
 		private const string c_guidPattern = @"\{[0-9a-zA-Z]{8}-[0-9a-zA-Z]{4}-[0-9a-zA-Z]{4}-[0-9a-zA-Z]{4}-[0-9a-zA-Z]{12}\}";
 
-		private static readonly string s_fullUsageMessage = string.Join(Environment.NewLine, new[]
-		{
-			"Usage: FindReplaceCode.exe <folder-path> <find> <replace> [<find> <replace> ...]"
-		});
+		private const string c_fullUsageMessage = "Usage: FindReplaceCode.exe <folder-path> <find> <replace> [<find> <replace> ...]";
 
 		private static readonly Regex s_hiddenDirectoryRegex = new Regex(@"[\\/]\..*[\\/]", RegexOptions.CultureInvariant);
 		private static readonly Regex s_word = new Regex("[A-Z]([A-Z]*(?![a-z])|[a-z]*)|[a-z]+|[0-9]+", RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);
 
 		private readonly string m_folderPath;
 		private readonly ReadOnlyCollection<KeyValuePair<string, string>> m_searchReplaceArgs;
-		private List<KeyValuePair<string, string>> m_searchReplacePairs;
-		private List<KeyValuePair<Regex, Guid>> m_searchReplaceGuids;
+		private List<KeyValuePair<string, string>>? m_searchReplacePairs;
+		private List<KeyValuePair<Regex, Guid>>? m_searchReplaceGuids;
 		private int m_editCount;
 		private int m_renameCount;
 	}

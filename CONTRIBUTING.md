@@ -1,18 +1,9 @@
-# Contributing to FindReplaceCode
+# Contributing
 
-## Prerequisites
+## Publishing
 
-* Install [Visual Studio 2017](https://www.visualstudio.com/downloads/) or [Visual Studio Code](https://code.visualstudio.com/) with the [editorconfig extension](https://github.com/editorconfig/editorconfig-vscode).
-* Install [.NET Core 2.0](https://www.microsoft.com/net/core).
+* To publish the library, update the `<VersionPrefix>` in [`Directory.Build.props`](Directory.Build.props), add a corresponding section to the top of [`ReleaseNotes.md`](ReleaseNotes.md), commit, and push.
 
-## Guidelines
+## Template
 
-* All new code **must** have complete unit tests.
-* All public classes, methods, interfaces, enums, etc. **must** have correct XML documentation comments.
-* Update [VersionHistory](VersionHistory.md) with a human-readable description of the change.
-
-## How to Build
-
-* Clone the repository: `git clone https://github.com/Faithlife/FindReplaceCode.git`
-* `cd FindReplaceCode`
-* `dotnet test tests/FindReplaceCode.Tests`
+* This repository uses the [`faithlife-build`](https://github.com/Faithlife/CSharpTemplate/tree/faithlife-build) template of [`Faithlife/CSharpTemplate`](https://github.com/Faithlife/CSharpTemplate).

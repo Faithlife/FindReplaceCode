@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace FindReplaceCode
 {
 	public static class ProgramSettings

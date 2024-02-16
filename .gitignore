@@ -1,23 +1,16 @@
-# ignore output folders
-bin/
-build/
-cake/
-obj/
-ipch/
-release/
-tools/
-
-# ignore user-specific options/cache files
 .vs/
-Thumbs.db
+.idea/
+artifacts/
+bin/
+obj/
+release/
+
 *.cache
-*.user
-*.opensdf
-*.sdf
-*.suo
-*.userprefs
+*.log
 *.ncrunchproject
 *.ncrunchsolution
+*.user
+launchSettings.json
 nCrunchTemp*
 _ReSharper*
-launchSettings.json
+.DS_Store

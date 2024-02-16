@@ -1,6 +1,10 @@
-# FindReplaceCode
+# ProjectName
 
 Used to generate a new code project from a template.
+
+[![Build](https://github.com/Faithlife/RepoName/workflows/Build/badge.svg)](https://github.com/Faithlife/RepoName/actions?query=workflow%3ABuild) [![NuGet](https://img.shields.io/nuget/v/ProjectName.svg)](https://www.nuget.org/packages/ProjectName)
+
+[Documentation](https://faithlife.github.io/FindReplaceCode/) | [Release Notes](https://github.com/Faithlife/FindReplaceCode/blob/master/ReleaseNotes.md) | [Contributing](https://github.com/Faithlife/FindReplaceCode/blob/master/CONTRIBUTING.md)
 
 **WARNING:** This tool is recursively destructive. Please be extremely careful with it.
 
@@ -43,15 +47,3 @@ Any subfolder whose name starts with a period (e.g. `.git`) is automatically exc
 ## Issues
 
 Only [certain file extensions](src/FindReplaceCode/ProgramSettings.cs) are currently considered for content replacement. Please let us know if there are others that should be added.
-
-## Build Status
-
-Ubuntu | Windows | NuGet
---- | --- | ---
-[![Travis CI](https://img.shields.io/travis/Faithlife/FindReplaceCode/master.svg)](https://travis-ci.org/Faithlife/FindReplaceCode) | [![AppVeyor](https://img.shields.io/appveyor/ci/Faithlife/findreplacecode/master.svg)](https://ci.appveyor.com/project/Faithlife/findreplacecode) | [![NuGet](https://img.shields.io/nuget/v/Faithlife.FindReplaceCode.Tool.svg)](https://www.nuget.org/packages/Faithlife.FindReplaceCode.Tool)
-
-## Documentation
-
-* License: [MIT](LICENSE)
-* [Version History](VersionHistory.md)
-* [Contributing Guidelines](CONTRIBUTING.md)

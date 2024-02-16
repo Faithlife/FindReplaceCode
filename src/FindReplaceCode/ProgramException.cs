@@ -1,5 +1,3 @@
-using System;
-
 namespace FindReplaceCode
 {
 	public sealed class ProgramException : Exception
