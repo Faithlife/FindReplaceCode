@@ -23,6 +23,7 @@ namespace FindReplaceCode
 			".sln",
 			".ts",
 			".xaml",
+			".yaml",
 			".yml",
 		};
 	}
