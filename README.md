@@ -2,7 +2,7 @@
 
 Used to generate a new code project from a template.
 
-[![Build](https://github.com/Faithlife/RepoName/workflows/Build/badge.svg)](https://github.com/Faithlife/RepoName/actions?query=workflow%3ABuild) [![NuGet](https://img.shields.io/nuget/v/FindReplaceCode.svg)](https://www.nuget.org/packages/FindReplaceCode)
+[![Build](https://github.com/Faithlife/RepoName/workflows/Build/badge.svg)](https://github.com/Faithlife/RepoName/actions?query=workflow%3ABuild) [![NuGet](https://img.shields.io/nuget/v/Faithlife.FindReplaceCode.Tool.svg)](https://www.nuget.org/packages/Faithlife.FindReplaceCode.Tool)
 
 [Documentation](https://faithlife.github.io/FindReplaceCode/) | [Release Notes](https://github.com/Faithlife/FindReplaceCode/blob/master/ReleaseNotes.md) | [Contributing](https://github.com/Faithlife/FindReplaceCode/blob/master/CONTRIBUTING.md)
 
