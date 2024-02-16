@@ -42,7 +42,7 @@ If the find text is not sufficiently unique in the existing files, this tool may
 
 At least one find-and-replace pair is required. Any additional pairs are executed in the order they are provided.
 
-Any subfolder whose name starts with a period (e.g. `.git`) is automatically excluded from modification, along with all of its files and subfolders.
+Any `.git` subfolders are automatically excluded from modification.
 
 ## Issues
 

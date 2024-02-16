@@ -1,5 +1,11 @@
 # Release Notes
 
+## 1.2.0
+
+* Find and replace `.yaml` files.
+* Find and replace within `.`-prefixed directories (except `.git`).
+* Support .NET 6/7/8.
+
 ## 1.1.0
 
 * Find and replace `.js`, `.py`, and `.ts` files.
