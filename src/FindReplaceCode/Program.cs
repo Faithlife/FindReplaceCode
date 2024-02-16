@@ -298,7 +298,7 @@ namespace FindReplaceCode
 
 		private const string c_fullUsageMessage = "Usage: FindReplaceCode.exe <folder-path> <find> <replace> [<find> <replace> ...]";
 
-		private static readonly Regex s_hiddenDirectoryRegex = new Regex(@"[\\/]\..*[\\/]", RegexOptions.CultureInvariant);
+		private static readonly Regex s_hiddenDirectoryRegex = new Regex(@"[\\/]\.git[\\/]", RegexOptions.CultureInvariant);
 		private static readonly Regex s_word = new Regex("[A-Z]([A-Z]*(?![a-z])|[a-z]*)|[a-z]+|[0-9]+", RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);
 
 		private readonly string m_folderPath;
