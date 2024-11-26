@@ -1,5 +1,9 @@
 # Release Notes
 
+## 1.3.0
+
+* Find and replace `.cshtml`, `.css`, and `.razor` files.
+
 ## 1.2.0
 
 * Find and replace `.yaml` files.
