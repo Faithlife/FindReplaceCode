@@ -10,7 +10,7 @@
     <NeutralLanguage>en-US</NeutralLanguage>
     <DebugType>embedded</DebugType>
     <GitHubOrganization>Faithlife</GitHubOrganization>
-    <RepositoryName>RepoName</RepositoryName>
+    <RepositoryName>FindReplaceCode</RepositoryName>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/$(GitHubOrganization)/$(RepositoryName)</PackageProjectUrl>
     <PackageReleaseNotes>https://github.com/$(GitHubOrganization)/$(RepositoryName)/blob/master/ReleaseNotes.md</PackageReleaseNotes>
