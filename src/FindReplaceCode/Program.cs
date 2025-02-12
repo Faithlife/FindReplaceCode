@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace FindReplaceCode
 {
-	public sealed class Program
+	internal sealed class Program
 	{
 		public Program(string[] args)
 		{
@@ -55,7 +55,7 @@ namespace FindReplaceCode
 			}
 
 			// calculate new GUIDs
-			m_searchReplaceGuids = oldGuids.Select(x => new KeyValuePair<Regex, Guid>(CreateRegexForGuid(x), Guid.NewGuid())).ToList();
+			m_searchReplaceGuids = [.. oldGuids.Select(x => new KeyValuePair<Regex, Guid>(CreateRegexForGuid(x), Guid.NewGuid()))];
 
 			FindReplace(infos, doIt: false);
 			Console.WriteLine();
@@ -292,7 +292,7 @@ namespace FindReplaceCode
 			return string.Join(separator.ToString(), words.Select(x => x.ToLowerInvariant()));
 		}
 
-		private static string[] GetWords(string value) => s_word.Matches(value).Select(x => x.ToString()).ToArray();
+		private static string[] GetWords(string value) => [.. s_word.Matches(value).Select(x => x.ToString())];
 
 		private const string c_guidPattern = @"\{[0-9a-zA-Z]{8}-[0-9a-zA-Z]{4}-[0-9a-zA-Z]{4}-[0-9a-zA-Z]{4}-[0-9a-zA-Z]{12}\}";
 

@@ -1,6 +1,6 @@
 namespace FindReplaceCode
 {
-	public static class ProgramSettings
+	internal static class ProgramSettings
 	{
 		public static readonly IReadOnlyCollection<string> FindReplaceFileContentExtensions = new HashSet<string>
 		{
