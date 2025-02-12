@@ -1,10 +1,9 @@
-namespace FindReplaceCode
+namespace FindReplaceCode;
+
+internal sealed class ProgramException : Exception
 {
-	internal sealed class ProgramException : Exception
+	public ProgramException(string message)
+		: base(message)
 	{
-		public ProgramException(string message)
-			: base(message)
-		{
-		}
 	}
 }
