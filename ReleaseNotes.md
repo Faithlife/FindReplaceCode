@@ -1,5 +1,9 @@
 # Release Notes
 
+## 1.4.0
+
+* Find and replace `.sql` and `.mysql` files.
+
 ## 1.3.0
 
 * Find and replace `.cshtml`, `.css`, and `.razor` files.
