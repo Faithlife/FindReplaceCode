@@ -1,8 +1,8 @@
 <Solution>
+  <!-- dotnet-solution-items: *; .github/*; .github/workflows/* -->
   <Folder Name="/Solution Items/">
     <File Path=".editorconfig" />
     <File Path=".gitattributes" />
-    <File Path=".github/workflows/build.yaml" />
     <File Path=".gitignore" />
     <File Path="build.ps1" />
     <File Path="CONTRIBUTING.md" />
@@ -13,6 +13,14 @@
     <File Path="nuget.config" />
     <File Path="README.md" />
     <File Path="ReleaseNotes.md" />
+  </Folder>
+  <Folder Name="/Solution Items/.github/">
+    <File Path=".github/conventions.yml" />
+    <File Path=".github/lsp.json" />
+  </Folder>
+  <Folder Name="/Solution Items/.github/workflows/">
+    <File Path=".github/workflows/ci.yml" />
+    <File Path=".github/workflows/copilot-setup-steps.yml" />
   </Folder>
   <Project Path="src/FindReplaceCode/FindReplaceCode.csproj" />
   <Project Path="tools/Build/Build.csproj" />
