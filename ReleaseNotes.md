@@ -1,5 +1,9 @@
 # Release Notes
 
+## 1.4.1
+
+* Update package README.
+
 ## 1.4.0
 
 * Find and replace `.sql` and `.mysql` files.
