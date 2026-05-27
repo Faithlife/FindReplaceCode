@@ -2,9 +2,7 @@
 
 Used to generate a new code project from a template.
 
-[![Build](https://github.com/Faithlife/FindReplaceCode/workflows/Build/badge.svg)](https://github.com/Faithlife/FindReplaceCode/actions?query=workflow%3ABuild) [![NuGet](https://img.shields.io/nuget/v/Faithlife.FindReplaceCode.Tool.svg)](https://www.nuget.org/packages/Faithlife.FindReplaceCode.Tool)
-
-[Documentation](https://faithlife.github.io/FindReplaceCode/) | [Release Notes](https://github.com/Faithlife/FindReplaceCode/blob/master/ReleaseNotes.md) | [Contributing](https://github.com/Faithlife/FindReplaceCode/blob/master/CONTRIBUTING.md)
+[![NuGet](https://img.shields.io/nuget/v/Faithlife.FindReplaceCode.Tool.svg)](https://www.nuget.org/packages/Faithlife.FindReplaceCode.Tool)
 
 **WARNING:** This tool is recursively destructive. Please be extremely careful with it.
 
@@ -47,3 +45,7 @@ Any `.git` subfolders are automatically excluded from modification.
 ## Issues
 
 Only [certain file extensions](src/FindReplaceCode/ProgramSettings.cs) are currently considered for content replacement. Please let us know if there are others that should be added.
+
+## Contributing
+
+See [Contributing](./CONTRIBUTING.md) for setup and contribution guidelines. For a history of notable changes, see the [Release Notes](./ReleaseNotes.md).
