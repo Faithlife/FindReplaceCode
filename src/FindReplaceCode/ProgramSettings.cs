@@ -25,6 +25,7 @@ internal static class ProgramSettings
 		".razor",
 		".settings",
 		".sln",
+		".slnx",
 		".sql",
 		".ts",
 		".xaml",
