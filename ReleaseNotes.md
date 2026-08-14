@@ -1,5 +1,9 @@
 # Release Notes
 
+## 1.4.2
+
+* Find and replace `.slnx` files.
+
 ## 1.4.1
 
 * Update package README.
